@@ -14,7 +14,6 @@ password  = lambda : ''.join(random.choice(string.letters + string.digits) for _
 
 
 
-
 class Invite(models.Model):
 
     #random identifier
@@ -22,10 +21,36 @@ class Invite(models.Model):
     email = models.EmailField(unique=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
-    @classmethod
-    def create(cls, email):
-        random.seed()
+    def save(self, *args, **kwargs):
+	if self.value == None:
+	    self.value = Invite.hash()
+	    self.save()
+        super(Invite, self).save(*args, **kwargs) 
 
+
+    def create_user(self):
+	if self.user != None:
+            raise DoubleInviteException("This Invite has been used! The user already exists.")
+
+        passw = password()
+        uname = "user#" + str(self.id * 42)       
+
+        send_mail(u'Данные для входа на сайт',
+        u'Вы зарегестрированы на сайте. \nЛогин: %s \nПароль: %s' % (uname, passw),
+        'noreply@inviter.com',
+        [self.email],
+        fail_silently=False)
+
+
+	user = User.objects.create_user(username=uname, email=self.email, password=passw)
+	self.user = user
+	self.save()
+	return user
+
+    @classmethod
+    def hash(cls):
+
+        random.seed()
         #check for collisions
 	#Use random numbers so that user knows nothing about their real id in database
         while True:
@@ -33,28 +58,5 @@ class Invite(models.Model):
             invs = Invite.objects.filter(value=val)
 	    if len(invs) == 0:
 		 break
-        invite = cls(value=val, email=email)
-	invite.save()
-        send_mail(u'Инвайт для регистрации на сайте', u'Поздравляю! Вы получили инвайт! Для регистрации на сайте перейдите по ссылке http://localhost:8000/%s' % invite.value, 'noreply@inviter.com', [invite.email], fail_silently=False)
+	return val
 
-        return invite
-
-    @classmethod
-    def create_user(cls, invite):
-	if invite.user != None:
-            raise DoubleInviteException("This Invite has been used! The user already exists.")
-
-        passw = password()
-        uname = "user#" + str(invite.id * 42)       
-
-        send_mail(u'Данные для входа на сайт',
-        u'Вы зарегестрированы на сайте. \nЛогин: %s \nПароль: %s' % (uname, passw),
-        'noreply@inviter.com',
-        [invite.email],
-        fail_silently=False)
-
-
-	user = User.objects.create_user(username=uname, email=invite.email, password=passw)
-	invite.user = user
-	invite.save()
-	return user

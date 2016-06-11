@@ -8,7 +8,7 @@ from django.core import mail
 class InvitedUserTestCase(TestCase):
 
     def  setUp(self):
-        Invite.create(email="testinvite@gmail.com")
+        Invite.objects.create(email="testinvite@gmail.com")
 
 
     def test_email(self):
@@ -19,13 +19,11 @@ class InvitedUserTestCase(TestCase):
     def test_create_user(self):
         print "****************************************\n\nTesting create user"	
         invite = Invite.objects.get(email="testinvite@gmail.com")
-        user = Invite.create_user(invite)
+        user = invite.create_user()
         self.assertEqual(invite.user, user)
         self.assertEqual(invite.email, user.email)
-	#sent invite
 	print mail.outbox[0].body
 	#sent credentials
-	print mail.outbox[1].body
 	
 
     def test_no_double_used_invites(self):
@@ -40,7 +38,7 @@ class InvitedUserTestCase(TestCase):
     def test_del(self):
 	print "******************************************\n\nTest invite is terminated on deletion of user"
 
-	inv = Invite.create(email="mmmm@mail.com")
+	inv = Invite.objects.create(email="mmmm@mail.com")
 	user = User.objects.create_user(username="user", email="mmmm@mail.com", password="123")
         
 	inv.user = user
