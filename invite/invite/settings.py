@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
 
-import os
+import os, socket
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +26,18 @@ SECRET_KEY = 'e5xke4+6qx4n#1(om$%j7kt^^&=vh4eg&7-0nw*ys-u@vzeq99'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+if DEBUG:
+    HOSTNAME = "localhost:8000"
+
+else:
+    try:
+        HOSTNAME = socket.gethostname() 
+    except:
+        HOSTNAME = 'localhost'
+
+
+DEFAULT_FROM_EMAIL = 'noreply@inviter.com'
 
 
 # Application definition
@@ -84,7 +96,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
 
 # Password validation
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -108,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

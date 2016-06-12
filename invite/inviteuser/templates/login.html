@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+
+{% block title %}Вход на сайт{% endblock%}
+
+{% block content %}
+<center>
+{% if form.errors %}
+<p> <font color="red"> Ошибка в логине или пароле.</font></p>
+{% endif %}
+
+    <p>Пожалуйста, представьтесь!</p>
+
+<form method="post" action="/login/" >
+{% csrf_token %}
+<table>
+<tr>
+    <td>{{ form.username.label_tag }}</td>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>{{ form.password.label_tag }}</td>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+
+<input type="submit" value="Войти" style="background-color: #ADD8E6"/>
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+</center>
+
+{% endblock %}

@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from inviteuser.views import index
+from inviteuser.views import index, invite, logout_view
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', index)
+    url(r'^$', index),
+    url(r'^invite/(\d+)$', invite),
+    url(r'^logout/$', logout_view),
+    url(r'^login/$', auth_views.login, {"template_name": "login.html" }),
 ]
