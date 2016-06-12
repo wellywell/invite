@@ -23,18 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'e5xke4+6qx4n#1(om$%j7kt^^&=vh4eg&7-0nw*ys-u@vzeq99'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
-if DEBUG:
-    HOSTNAME = "localhost:8000"
-
-else:
-    try:
-        HOSTNAME = socket.gethostname() 
-    except:
-        HOSTNAME = 'localhost'
+HOSTNAME = 'localhost:8000'
 
 
 DEFAULT_FROM_EMAIL = 'noreply@inviter.com'
@@ -134,5 +127,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
-
+PROJECT_DIR  = os.path.dirname(__file__) 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
